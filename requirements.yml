@@ -1,0 +1,14 @@
+---
+roles:
+  - src: elan.simple_nginx_reverse_proxy
+    version: "0.2.0"
+  - src: elan.elan_certbot
+    version: "0.3.0"
+  - name: elan.docker_install
+    version: "0.1.0"
+  # For debian based systems try:
+  # - name: geerlingguy.docker
+
+collections:
+  - community.general
+  - ansible.posix

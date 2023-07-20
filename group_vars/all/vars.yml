@@ -1,0 +1,18 @@
+---
+pilos_app_url: "{{ inventory_hostname }}"
+
+# This should go into a vault:
+pilos_app_key: ""  # generate with 'docker run --rm docker.io/pilos/pilos:latest php artisan key:generate --show'
+pilos_database_password: ""  # generate with 'openssl rand -hex 24'
+
+nginx_proxy: |
+  location / {
+    proxy_pass          http://127.0.0.1:5000;
+    proxy_set_header    Host              $host;
+    proxy_set_header    X-Forwarded-Port  $server_port;
+    proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_set_header    X-Forwarded-Proto $scheme;
+    proxy_http_version  1.1;
+  }
+
+elan_certbot_letsencrypt_email: admin@example.org

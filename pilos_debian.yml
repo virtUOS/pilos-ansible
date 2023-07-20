@@ -1,0 +1,50 @@
+---
+## Untested!!!
+- name: Set up pilos
+  hosts: pilos
+  become: true
+
+  roles:
+    - role: geerlingguy.docker  # activate in requirements.yml
+    - role: elan.simple_nginx_reverse_proxy
+    - role: elan.elan_certbot
+
+  tasks:
+    - name: Create pilos directories
+      become: true
+      ansible.builtin.file:
+        path: /opt/pilos/app/Auth/config
+        owner: root
+        group: root
+        state: directory
+        mode: '0755'
+    - name: Create docker-compose file
+      ansible.builtin.template:
+        src: files/pilos/docker-compose.yml
+        dest: /opt/pilos/docker-compose.yml
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Restart pilos
+    - name: Create pilos configuration
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.src }}"
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Restart pilos
+      loop:
+        - src: files/pilos/pilos.env
+          dest: /opt/pilos/.env
+        - src: files/pilos/ldap_mapping.json
+          dest: /opt/pilos/app/Auth/config/ldap_mapping.json
+
+  handlers:
+    - name: Restart pilos  # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: "{{ item }}"
+        chdir: /opt/pilos
+      loop:
+        - docker compose down
+        - docker compose up --detach

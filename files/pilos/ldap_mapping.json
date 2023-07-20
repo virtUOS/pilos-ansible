@@ -1,0 +1,36 @@
+{
+    "attributes": {
+        "external_id": "cn",
+        "first_name": "givenname",
+        "last_name": "sn",
+        "email": "mail",
+        "groups": "memberof"
+    },
+    "roles":[
+        {
+            "name": "user",
+            "disabled": false,
+            "rules": [
+                {
+                    "attribute": "external_id",
+                    "regex": "/^.*/i"
+                }
+            ]
+        },
+        {
+            "name": "admin",
+            "disabled": false,
+            "all": true,
+            "rules": [
+                {
+                    "attribute":"email",
+                    "regex":"/@its\\.university\\.org$/i"
+                },
+                {
+                    "attribute": "memberof",
+                    "regex": "/^cn=admin,ou=Groups,dc=university,dc=org$/im"
+                }
+      ]
+    }
+    ]
+}
